@@ -2,7 +2,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
    Name = "LOL Hub | FreeScript | South Bronx: The Trenches❗",
-   LoadingTitle = "W Script",
+   LoadingTitle = "w Script",
    LoadingSubtitle = "Created by logitech2234 on dc",
    ConfigurationSaving = {
       Enabled = true,
@@ -83,7 +83,7 @@ local FSection = FTab:CreateSection("")
 -- Player Tab - Walk Speed
 local Slider = PlayerTab:CreateSlider({
     Name = "Walk Speed",
-    Range = {0, 23},
+    Range = {0, 50},
     Increment = 1,
     Suffix = "Speed",
     CurrentValue = 16,
@@ -324,6 +324,20 @@ local Button = ESPTab:CreateButton({
 })
 
 local Button = ESPTab:CreateButton({
+   Name = "Skeleton ESP",
+   Callback = function()
+    local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Blissful4992/ESPs/main/UniversalSkeleton.lua"))()
+local Skeletons = {}
+for _, Player in next, game.Players:GetChildren() do
+	table.insert(Skeletons, Library:NewSkeleton(Player, true));
+end
+game.Players.PlayerAdded:Connect(function(Player)
+	table.insert(Skeletons, Library:NewSkeleton(Player, true));
+end) 
+   end,
+})
+
+local Button = ESPTab:CreateButton({
     Name = "ESP Names",
     Callback = function()
     -- Services
@@ -402,6 +416,90 @@ runService.RenderStepped:Connect(function()
  })
 
 local Button = ESPTab:CreateButton({
+   Name = "Health ESP",
+   Callback = function()
+    local function NewLine(thickness, color)
+    local line = Drawing.new("Line")
+    line.Visible = false
+    line.From = Vector2.new(0, 0)
+    line.To = Vector2.new(0, 0)
+    line.Color = color
+    line.Thickness = thickness
+    line.Transparency = 1
+    return line
+end
+
+local function HealthBar(plr)
+    local library = {
+        -- Sağlık barı çizgileri
+        healthbar = NewLine(3, Color3.fromRGB(0, 0, 0)),  -- Arka plan çizgisi
+        greenhealth = NewLine(1.5, Color3.fromRGB(0, 255, 0))  -- Sağlık durumu çizgisi (yeşil)
+    }
+
+    -- Health bar'ı sürekli güncelleyen fonksiyon
+    local function Updater()
+        local connection
+        connection = game:GetService("RunService").RenderStepped:Connect(function()
+            if plr.Character ~= nil and plr.Character:FindFirstChild("Humanoid") ~= nil and plr.Character:FindFirstChild("HumanoidRootPart") ~= nil and plr.Character.Humanoid.Health > 0 and plr.Character:FindFirstChild("Head") ~= nil then
+                local HumPos, OnScreen = game:GetService("Workspace").CurrentCamera:WorldToViewportPoint(plr.Character.HumanoidRootPart.Position)
+                if OnScreen then
+                    local head = game:GetService("Workspace").CurrentCamera:WorldToViewportPoint(plr.Character.Head.Position)
+                    local DistanceY = math.clamp((Vector2.new(head.X, head.Y) - Vector2.new(HumPos.X, HumPos.Y)).magnitude, 2, math.huge)
+
+                    -- Barın boyutunu hesaplama
+                    local d = (Vector2.new(HumPos.X - DistanceY, HumPos.Y - DistanceY*2) - Vector2.new(HumPos.X - DistanceY, HumPos.Y + DistanceY*2)).magnitude
+                    local healthoffset = plr.Character.Humanoid.Health / plr.Character.Humanoid.MaxHealth * d
+
+                    -- Sağlık barını güncelleme
+                    library.greenhealth.From = Vector2.new(HumPos.X - DistanceY - 4, HumPos.Y + DistanceY*2)
+                    library.greenhealth.To = Vector2.new(HumPos.X - DistanceY - 4, HumPos.Y + DistanceY*2 - healthoffset)
+
+                    library.healthbar.From = Vector2.new(HumPos.X - DistanceY - 4, HumPos.Y + DistanceY*2)
+                    library.healthbar.To = Vector2.new(HumPos.X - DistanceY - 4, HumPos.Y - DistanceY*2)
+
+                    -- Sağlık çubuğunun rengini ayarlama (Kırmızıdan Yeşile geçiş)
+                    local green = Color3.fromRGB(0, 255, 0)
+                    local red = Color3.fromRGB(255, 0, 0)
+                    library.greenhealth.Color = red:lerp(green, plr.Character.Humanoid.Health / plr.Character.Humanoid.MaxHealth)
+
+                    -- Sağlık çubuğunu görünür yapma
+                    library.greenhealth.Visible = true
+                    library.healthbar.Visible = true
+                else
+                    -- Eğer oyuncu ekran dışında ise, sağlık çubuğunu gizle
+                    library.greenhealth.Visible = false
+                    library.healthbar.Visible = false
+                end
+            else
+                -- Eğer oyuncu öldü veya yoksa, sağlık çubuğunu gizle
+                library.greenhealth.Visible = false
+                library.healthbar.Visible = false
+            end
+        end)
+    end
+
+    -- Çubuğu başlatmak için Updater fonksiyonunu çalıştır
+    coroutine.wrap(Updater)()
+end
+
+-- Mevcut oyuncuları kontrol et
+for i, v in pairs(game:GetService("Players"):GetPlayers()) do
+    if v.Name ~= game:GetService("Players").LocalPlayer.Name then
+        coroutine.wrap(HealthBar)(v)
+    end
+end
+
+-- Yeni oyuncular eklenince sağlık çubuğunu başlat
+game.Players.PlayerAdded:Connect(function(newplr)
+    if newplr.Name ~= game:GetService("Players").LocalPlayer.Name then
+        coroutine.wrap(HealthBar)(newplr)
+    end
+end)
+
+   end,
+})
+
+local Button = ESPTab:CreateButton({
    Name = "ESP ShowGuns By SergiuPro",
    Callback = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/SergiuPro211/SouthCottonFREE/main/ShowGuns"))()
@@ -425,12 +523,6 @@ local Button = PlayerTab:CreateButton({
 
    Name = "Name Spoof",
     Callback = function()
-    --spoof roblox game name when ingame
---by CandyLean#2645
---works in most games with leaderboard names
-
-
-
 getgenv().name = "LOLhub"
 
 local Plr = game.Players.LocalPlayer
