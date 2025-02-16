@@ -60,6 +60,8 @@ Rayfield:Notify({
 local InfoTab = Window:CreateTab("Info", nil) -- Title, Image
 local InfoSection = InfoTab:CreateSection("Info")
 
+local Paragraph = InfoTab:CreateParagraph({Title = "Last Updated: 16.2.2025", Content = ""})
+
 local PlayerTab = Window:CreateTab("Player", nil) -- Title, Image
 local PlayerSection = PlayerTab:CreateSection("Player")
 
@@ -72,15 +74,16 @@ local AimlockSection = AimlockTab:CreateSection("Aimlock")
 local AutofarmTab = Window:CreateTab("AutoFarm", nil) -- Title, Image
 local Section = AutofarmTab:CreateSection("Autofarm")
 
-
-
 local STab = Window:CreateTab("Other")
 local SSection = STab:CreateSection("")
+
+local FTab = Window:CreateTab("FOV")
+local FSection = FTab:CreateSection("")
 
 -- Player Tab - Walk Speed
 local Slider = PlayerTab:CreateSlider({
     Name = "Walk Speed",
-    Range = {0, 23},
+    Range = {0, 50},
     Increment = 1,
     Suffix = "Speed",
     CurrentValue = 16,
@@ -416,13 +419,81 @@ local Button = PlayerTab:CreateButton({
     end,
 })
 
-local PlayerSection = PlayerTab:CreateSection("FOV")
+local PlayerSection = PlayerTab:CreateSection("Name Spoof")
 
 local Button = PlayerTab:CreateButton({
 
-   Name = "Classic",
+   Name = "Name Spoof",
     Callback = function()
-    local FovNumber = 80 --Enter your FOV number here
+    --spoof roblox game name when ingame
+--by CandyLean#2645
+--works in most games with leaderboard names
+
+
+
+getgenv().name = "LOLhub"
+
+local Plr = game.Players.LocalPlayer
+for Index, Value in next, game:GetDescendants() do 
+    if Value.ClassName == "TextLabel" then 
+        local has = string.find(Value.Text,Plr.Name) 
+        if has then 
+            local str = Value.Text:gsub(Plr.Name,name)
+            Value.Text = str 
+        end
+        Value:GetPropertyChangedSignal("Text"):Connect(function()
+            local str = Value.Text:gsub(Plr.Name,name)
+            Value.Text = str 
+        end)
+    end
+end
+
+game.DescendantAdded:Connect(function(Value)
+    if Value.ClassName == "TextLabel" then 
+        local has = string.find(Value.Text,Plr.Name)
+        Value:GetPropertyChangedSignal("Text"):Connect(function()
+            local str = Value.Text:gsub(Plr.Name,name)
+            Value.Text = str 
+        end)
+        if has then 
+            local str = Value.Text:gsub(Plr.Name,name)
+            Value.Text = str 
+        end
+        
+    end
+end)
+----------------------
+--Spoof Name Client
+---------------------
+    end,
+})
+
+
+local PlayerSection = FTab:CreateSection("FOV")
+
+local Button = FTab:CreateButton({
+
+   Name = "Default",
+    Callback = function()
+    local FovNumber = 90 --Enter your FOV number here
+    local Camera = workspace.CurrentCamera
+    Camera.FieldOfView = FovNumber
+    end,
+})
+
+local Button = FTab:CreateButton({
+   Name = "100",
+    Callback = function()
+    local FovNumber = 100 --Enter your FOV number here
+    local Camera = workspace.CurrentCamera
+    Camera.FieldOfView = FovNumber
+    end,
+})
+
+local Button = FTab:CreateButton({
+   Name = "110",
+    Callback = function()
+    local FovNumber = 110 --Enter your FOV number here
     local Camera = workspace.CurrentCamera
     Camera.FieldOfView = FovNumber
     end,
@@ -435,7 +506,7 @@ local Button = STab:CreateButton({
     end,
 })
 
-local Button = PlayerTab:CreateButton({
+local Button = FTab:CreateButton({
    Name = "120",
     Callback = function()
     local FovNumber = 120 --Enter your FOV number here
@@ -444,6 +515,434 @@ local Button = PlayerTab:CreateButton({
     end,
 })
 
+local PlayerSection = FTab:CreateSection("Classic FOV circle [rejoin to turn off]")
+
+local Button = FTab:CreateButton({
+   Name = "Classic Circle",
+    Callback = function()
+    local Camera = workspace.CurrentCamera
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+
+local CircleSides = 64 -- How many sides the FOV circle would have.
+local CircleColor = Color3.fromRGB(255, 255, 255) -- (RGB) Color that the FOV circle would appear as.
+local CircleTransparency = 1 -- Transparency of the circle.
+local CircleRadius = 100 -- The radius of the circle / FOV.
+local CircleFilled = false -- Determines whether or not the circle is filled.
+local CircleVisible = true -- Determines whether or not the circle is visible.
+local CircleThickness = 2 -- The thickness of the circle.
+
+local FOVCircle = Drawing.new("Circle")
+FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+FOVCircle.Radius = CircleRadius
+FOVCircle.Filled = CircleFilled
+FOVCircle.Color = CircleColor
+FOVCircle.Visible = CircleVisible
+FOVCircle.Radius = CircleRadius
+FOVCircle.Transparency = CircleTransparency
+FOVCircle.NumSides = CircleSides
+FOVCircle.Thickness = CircleThickness
+
+local mousemoverel = (mousemoverel or (Input and Input.MouseMove)) or nil
+
+local function updateMouse(target)
+    if not target then return end
+    local Mouse = game.Players.LocalPlayer:GetMouse()
+
+    local posVector3 = Camera:WorldToScreenPoint(target.Position)
+    local x, y = posVector3.X - Mouse.X, posVector3.Y - Mouse.Y
+
+    if math.abs(x) > 4 then
+        x = math.sign(x) * math.max(math.sqrt(math.abs(x)), 4)
+    end
+    if math.abs(y) > 4 then
+        y = math.sign(y) * math.max(math.sqrt(math.abs(y)), 4)
+    end
+
+end
+
+RunService.RenderStepped:Connect(function()
+    FOVCircle.Position = Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y)
+    FOVCircle.Radius = CircleRadius
+    FOVCircle.Filled = CircleFilled
+    FOVCircle.Color = CircleColor
+    FOVCircle.Visible = CircleVisible
+    FOVCircle.Radius = CircleRadius
+    FOVCircle.Transparency = CircleTransparency
+    FOVCircle.NumSides = CircleSides
+    FOVCircle.Thickness = CircleThickness
+
+    if AimbotEnabled == true then
+        if target ~= nil then
+            if mousemoverel ~= nil then
+                updateMouse(target)
+            else
+                TweenService:Create(Camera, TweenInfo.new(Sensitivity, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {CFrame = CFrame.new(Camera.CFrame.Position, target.Position)}):Play()
+            end
+        end
+    end
+end)
+    end,
+})
+
+local Button = FTab:CreateButton({
+   Name = "Classic red Circle",
+    Callback = function()
+        local Camera = workspace.CurrentCamera
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+
+local CircleSides = 64 -- How many sides the FOV circle would have.
+local CircleColor = Color3.fromRGB(228, 8, 10) -- (RGB) Color that the FOV circle would appear as.
+local CircleTransparency = 1 -- Transparency of the circle.
+local CircleRadius = 100 -- The radius of the circle / FOV.
+local CircleFilled = false -- Determines whether or not the circle is filled.
+local CircleVisible = true -- Determines whether or not the circle is visible.
+local CircleThickness = 2 -- The thickness of the circle.
+
+local FOVCircle = Drawing.new("Circle")
+FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+FOVCircle.Radius = CircleRadius
+FOVCircle.Filled = CircleFilled
+FOVCircle.Color = CircleColor
+FOVCircle.Visible = CircleVisible
+FOVCircle.Radius = CircleRadius
+FOVCircle.Transparency = CircleTransparency
+FOVCircle.NumSides = CircleSides
+FOVCircle.Thickness = CircleThickness
+
+local mousemoverel = (mousemoverel or (Input and Input.MouseMove)) or nil
+
+local function updateMouse(target)
+    if not target then return end
+    local Mouse = game.Players.LocalPlayer:GetMouse()
+
+    local posVector3 = Camera:WorldToScreenPoint(target.Position)
+    local x, y = posVector3.X - Mouse.X, posVector3.Y - Mouse.Y
+
+    if math.abs(x) > 4 then
+        x = math.sign(x) * math.max(math.sqrt(math.abs(x)), 4)
+    end
+    if math.abs(y) > 4 then
+        y = math.sign(y) * math.max(math.sqrt(math.abs(y)), 4)
+    end
+
+end
+
+RunService.RenderStepped:Connect(function()
+    FOVCircle.Position = Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y)
+    FOVCircle.Radius = CircleRadius
+    FOVCircle.Filled = CircleFilled
+    FOVCircle.Color = CircleColor
+    FOVCircle.Visible = CircleVisible
+    FOVCircle.Radius = CircleRadius
+    FOVCircle.Transparency = CircleTransparency
+    FOVCircle.NumSides = CircleSides
+    FOVCircle.Thickness = CircleThickness
+
+    if AimbotEnabled == true then
+        if target ~= nil then
+            if mousemoverel ~= nil then
+                updateMouse(target)
+            else
+                TweenService:Create(Camera, TweenInfo.new(Sensitivity, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {CFrame = CFrame.new(Camera.CFrame.Position, target.Position)}):Play()
+            end
+        end
+    end
+end)
+    end,
+})
+
+local Button = FTab:CreateButton({
+   Name = "Classic yellow Circle",
+    Callback = function()
+            local Camera = workspace.CurrentCamera
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+
+local CircleSides = 64 -- How many sides the FOV circle would have.
+local CircleColor = Color3.fromRGB(255, 222, 89) -- (RGB) Color that the FOV circle would appear as.
+local CircleTransparency = 1 -- Transparency of the circle.
+local CircleRadius = 100 -- The radius of the circle / FOV.
+local CircleFilled = false -- Determines whether or not the circle is filled.
+local CircleVisible = true -- Determines whether or not the circle is visible.
+local CircleThickness = 2 -- The thickness of the circle.
+
+local FOVCircle = Drawing.new("Circle")
+FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+FOVCircle.Radius = CircleRadius
+FOVCircle.Filled = CircleFilled
+FOVCircle.Color = CircleColor
+FOVCircle.Visible = CircleVisible
+FOVCircle.Radius = CircleRadius
+FOVCircle.Transparency = CircleTransparency
+FOVCircle.NumSides = CircleSides
+FOVCircle.Thickness = CircleThickness
+
+local mousemoverel = (mousemoverel or (Input and Input.MouseMove)) or nil
+
+local function updateMouse(target)
+    if not target then return end
+    local Mouse = game.Players.LocalPlayer:GetMouse()
+
+    local posVector3 = Camera:WorldToScreenPoint(target.Position)
+    local x, y = posVector3.X - Mouse.X, posVector3.Y - Mouse.Y
+
+    if math.abs(x) > 4 then
+        x = math.sign(x) * math.max(math.sqrt(math.abs(x)), 4)
+    end
+    if math.abs(y) > 4 then
+        y = math.sign(y) * math.max(math.sqrt(math.abs(y)), 4)
+    end
+
+end
+
+RunService.RenderStepped:Connect(function()
+    FOVCircle.Position = Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y)
+    FOVCircle.Radius = CircleRadius
+    FOVCircle.Filled = CircleFilled
+    FOVCircle.Color = CircleColor
+    FOVCircle.Visible = CircleVisible
+    FOVCircle.Radius = CircleRadius
+    FOVCircle.Transparency = CircleTransparency
+    FOVCircle.NumSides = CircleSides
+    FOVCircle.Thickness = CircleThickness
+
+    if AimbotEnabled == true then
+        if target ~= nil then
+            if mousemoverel ~= nil then
+                updateMouse(target)
+            else
+                TweenService:Create(Camera, TweenInfo.new(Sensitivity, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {CFrame = CFrame.new(Camera.CFrame.Position, target.Position)}):Play()
+            end
+        end
+    end
+end)
+    end,
+})
+
+local PlayerSection = FTab:CreateSection("Filled FOV circle")
+
+local Button = FTab:CreateButton({
+   Name = "Filled classic Circle",
+    Callback = function()
+    local Camera = workspace.CurrentCamera
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+
+local CircleSides = 64 -- How many sides the FOV circle would have.
+local CircleColor = Color3.fromRGB(255, 255, 255) -- (RGB) Color that the FOV circle would appear as.
+local CircleTransparency = 0.3 -- Transparency of the circle.
+local CircleRadius = 100 -- The radius of the circle / FOV.
+local CircleFilled = true -- Determines whether or not the circle is filled.
+local CircleVisible = true -- Determines whether or not the circle is visible.
+local CircleThickness = 2 -- The thickness of the circle.
+
+local FOVCircle = Drawing.new("Circle")
+FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+FOVCircle.Radius = CircleRadius
+FOVCircle.Filled = CircleFilled
+FOVCircle.Color = CircleColor
+FOVCircle.Visible = CircleVisible
+FOVCircle.Radius = CircleRadius
+FOVCircle.Transparency = CircleTransparency
+FOVCircle.NumSides = CircleSides
+FOVCircle.Thickness = CircleThickness
+
+local mousemoverel = (mousemoverel or (Input and Input.MouseMove)) or nil
+
+local function updateMouse(target)
+    if not target then return end
+    local Mouse = game.Players.LocalPlayer:GetMouse()
+
+    local posVector3 = Camera:WorldToScreenPoint(target.Position)
+    local x, y = posVector3.X - Mouse.X, posVector3.Y - Mouse.Y
+
+    if math.abs(x) > 4 then
+        x = math.sign(x) * math.max(math.sqrt(math.abs(x)), 4)
+    end
+    if math.abs(y) > 4 then
+        y = math.sign(y) * math.max(math.sqrt(math.abs(y)), 4)
+    end
+
+end
+
+RunService.RenderStepped:Connect(function()
+    FOVCircle.Position = Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y)
+    FOVCircle.Radius = CircleRadius
+    FOVCircle.Filled = CircleFilled
+    FOVCircle.Color = CircleColor
+    FOVCircle.Visible = CircleVisible
+    FOVCircle.Radius = CircleRadius
+    FOVCircle.Transparency = CircleTransparency
+    FOVCircle.NumSides = CircleSides
+    FOVCircle.Thickness = CircleThickness
+
+    if AimbotEnabled == true then
+        if target ~= nil then
+            if mousemoverel ~= nil then
+                updateMouse(target)
+            else
+                TweenService:Create(Camera, TweenInfo.new(Sensitivity, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {CFrame = CFrame.new(Camera.CFrame.Position, target.Position)}):Play()
+            end
+        end
+    end
+ end)
+    end,
+})
+
+local Button = FTab:CreateButton({
+   Name = "Filled red Circle",
+    Callback = function()
+    local Camera = workspace.CurrentCamera
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+
+local CircleSides = 64 -- How many sides the FOV circle would have.
+local CircleColor = Color3.fromRGB(228, 8, 10) -- (RGB) Color that the FOV circle would appear as.
+local CircleTransparency = 0.3 -- Transparency of the circle.
+local CircleRadius = 100 -- The radius of the circle / FOV.
+local CircleFilled = true -- Determines whether or not the circle is filled.
+local CircleVisible = true -- Determines whether or not the circle is visible.
+local CircleThickness = 2 -- The thickness of the circle.
+
+local FOVCircle = Drawing.new("Circle")
+FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+FOVCircle.Radius = CircleRadius
+FOVCircle.Filled = CircleFilled
+FOVCircle.Color = CircleColor
+FOVCircle.Visible = CircleVisible
+FOVCircle.Radius = CircleRadius
+FOVCircle.Transparency = CircleTransparency
+FOVCircle.NumSides = CircleSides
+FOVCircle.Thickness = CircleThickness
+
+local mousemoverel = (mousemoverel or (Input and Input.MouseMove)) or nil
+
+local function updateMouse(target)
+    if not target then return end
+    local Mouse = game.Players.LocalPlayer:GetMouse()
+
+    local posVector3 = Camera:WorldToScreenPoint(target.Position)
+    local x, y = posVector3.X - Mouse.X, posVector3.Y - Mouse.Y
+
+    if math.abs(x) > 4 then
+        x = math.sign(x) * math.max(math.sqrt(math.abs(x)), 4)
+    end
+    if math.abs(y) > 4 then
+        y = math.sign(y) * math.max(math.sqrt(math.abs(y)), 4)
+    end
+
+end
+
+RunService.RenderStepped:Connect(function()
+    FOVCircle.Position = Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y)
+    FOVCircle.Radius = CircleRadius
+    FOVCircle.Filled = CircleFilled
+    FOVCircle.Color = CircleColor
+    FOVCircle.Visible = CircleVisible
+    FOVCircle.Radius = CircleRadius
+    FOVCircle.Transparency = CircleTransparency
+    FOVCircle.NumSides = CircleSides
+    FOVCircle.Thickness = CircleThickness
+
+    if AimbotEnabled == true then
+        if target ~= nil then
+            if mousemoverel ~= nil then
+                updateMouse(target)
+            else
+                TweenService:Create(Camera, TweenInfo.new(Sensitivity, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {CFrame = CFrame.new(Camera.CFrame.Position, target.Position)}):Play()
+            end
+        end
+    end
+ end)
+   end,
+})
+local Button = FTab:CreateButton({
+   Name = "Filled yellow Circle",
+    Callback = function()
+            local Camera = workspace.CurrentCamera
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+
+local CircleSides = 64 -- How many sides the FOV circle would have.
+local CircleColor = Color3.fromRGB(255, 222, 89) -- (RGB) Color that the FOV circle would appear as.
+local CircleTransparency = 0.3 -- Transparency of the circle.
+local CircleRadius = 100 -- The radius of the circle / FOV.
+local CircleFilled = true -- Determines whether or not the circle is filled.
+local CircleVisible = true -- Determines whether or not the circle is visible.
+local CircleThickness = 2 -- The thickness of the circle.
+
+local FOVCircle = Drawing.new("Circle")
+FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+FOVCircle.Radius = CircleRadius
+FOVCircle.Filled = CircleFilled
+FOVCircle.Color = CircleColor
+FOVCircle.Visible = CircleVisible
+FOVCircle.Radius = CircleRadius
+FOVCircle.Transparency = CircleTransparency
+FOVCircle.NumSides = CircleSides
+FOVCircle.Thickness = CircleThickness
+
+local mousemoverel = (mousemoverel or (Input and Input.MouseMove)) or nil
+
+local function updateMouse(target)
+    if not target then return end
+    local Mouse = game.Players.LocalPlayer:GetMouse()
+
+    local posVector3 = Camera:WorldToScreenPoint(target.Position)
+    local x, y = posVector3.X - Mouse.X, posVector3.Y - Mouse.Y
+
+    if math.abs(x) > 4 then
+        x = math.sign(x) * math.max(math.sqrt(math.abs(x)), 4)
+    end
+    if math.abs(y) > 4 then
+        y = math.sign(y) * math.max(math.sqrt(math.abs(y)), 4)
+    end
+
+end
+
+RunService.RenderStepped:Connect(function()
+    FOVCircle.Position = Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y)
+    FOVCircle.Radius = CircleRadius
+    FOVCircle.Filled = CircleFilled
+    FOVCircle.Color = CircleColor
+    FOVCircle.Visible = CircleVisible
+    FOVCircle.Radius = CircleRadius
+    FOVCircle.Transparency = CircleTransparency
+    FOVCircle.NumSides = CircleSides
+    FOVCircle.Thickness = CircleThickness
+
+    if AimbotEnabled == true then
+        if target ~= nil then
+            if mousemoverel ~= nil then
+                updateMouse(target)
+            else
+                TweenService:Create(Camera, TweenInfo.new(Sensitivity, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {CFrame = CFrame.new(Camera.CFrame.Position, target.Position)}):Play()
+            end
+        end
+    end
+ end)
+   end,
+})
 local Button = AutofarmTab:CreateButton({
    Name = "Box AutoFarm To Truck",
    Callback = function()
