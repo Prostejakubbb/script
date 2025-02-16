@@ -75,9 +75,6 @@ local Section = AutofarmTab:CreateSection("Autofarm")
 local InfYTab = Window:CreateTab("Inf Yeld")
 local InfYSection = InfYTab:CreateSection("InfY")
 
-local scriptYY = Window:CreateTab("SB")
-local scriptYYSection = ScriptYYTab:CreateSection("Script")
-
 -- Player Tab - Walk Speed
 local Slider = PlayerTab:CreateSlider({
     Name = "Walk Speed",
