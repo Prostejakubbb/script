@@ -2,7 +2,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
    Name = "LOL Hub | FreeScript | South Bronx: The Trenches❗",
-   LoadingTitle = "L's Script",
+   LoadingTitle = "W Script",
    LoadingSubtitle = "Created by logitech2234 on dc",
    ConfigurationSaving = {
       Enabled = true,
