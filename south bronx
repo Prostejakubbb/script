@@ -324,7 +324,7 @@ local Button = ESPTab:CreateButton({
 })
 
 local Button = ESPTab:CreateButton({
-   Name = "Skeleton ESP",
+   Name = "Skeleton ESP [Bugs with Aimlock]",
    Callback = function()
     local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Blissful4992/ESPs/main/UniversalSkeleton.lua"))()
 local Skeletons = {}
