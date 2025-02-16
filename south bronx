@@ -83,7 +83,7 @@ local FSection = FTab:CreateSection("")
 -- Player Tab - Walk Speed
 local Slider = PlayerTab:CreateSlider({
     Name = "Walk Speed",
-    Range = {0, 50},
+    Range = {0, 23},
     Increment = 1,
     Suffix = "Speed",
     CurrentValue = 16,
