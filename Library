@@ -1,5 +1,5 @@
 local LumosUI = {}
-local validKey = "1234"  -- The valid key
+local validKey = "1234"  -- The default valid key
 
 -- Key System: Check if the entered key is valid
 function LumosUI:CheckKey(userKey)
@@ -118,18 +118,25 @@ function LumosUI:CreateKeyInputWindow(callback)
         end
     end)
 
-    -- Minimize functionality
+    -- Minimize window functionality with correct behavior
+    local isMinimized = false
     MinimizeButton.MouseButton1Click:Connect(function()
-        if Frame.Size == UDim2.new(0, 400, 0, 200) then
-            -- Minimize the window
-            Frame:TweenSize(UDim2.new(0, 200, 0, 40), "Out", "Quad", 0.2, true)
+        if not isMinimized then
+            -- Minimize the window with animation
+            Frame:TweenSize(UDim2.new(0, 400, 0, 40), "Out", "Quad", 0.2, true)
             MinimizeButton.Text = "+"
+            isMinimized = true
         else
-            -- Restore the window
+            -- Restore the window with animation
             Frame:TweenSize(UDim2.new(0, 400, 0, 200), "Out", "Quad", 0.2, true)
             MinimizeButton.Text = "_"
+            isMinimized = false
         end
     end)
+
+    -- Add opening animation for the window
+    Frame.Position = UDim2.new(0.5, -200, 0.5, -100)
+    Frame:TweenPosition(UDim2.new(0.5, -200, 0.5, -100), "Out", "Quad", 0.5, true)
 
     return ScreenGui
 end
@@ -206,11 +213,9 @@ function LumosUI:CreateWindow(title, size)
     -- Minimize window functionality
     MinimizeButton.MouseButton1Click:Connect(function()
         if Frame.Size == UDim2.new(0, 500, 0, 400) then
-            -- Minimize the window
             Frame:TweenSize(UDim2.new(0, 200, 0, 40), "Out", "Quad", 0.2, true)
             MinimizeButton.Text = "+"
         else
-            -- Restore the window
             Frame:TweenSize(UDim2.new(0, 500, 0, 400), "Out", "Quad", 0.2, true)
             MinimizeButton.Text = "_"
         end
