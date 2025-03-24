@@ -1,85 +1,90 @@
--- LumosUI Library (Inspired by Obsidian and Pepsi UI)
--- Author: YourName
--- Date: March 25, 2025
-
 local LumosUI = {}
-local validKey = "1234" -- Change this to your desired key
+local validKey = "1234"  -- The valid key
 
--- Key System
+-- Key System: Check if the entered key is valid
 function LumosUI:CheckKey(userKey)
-    if userKey == validKey then
-        return true
-    else
-        return false
-    end
+    return userKey == validKey
 end
 
--- Function to create a key prompt screen
-function LumosUI:CreateKeyPrompt()
-    -- Create a ScreenGui for the key prompt
-    local keyScreen = Instance.new("ScreenGui")
-    keyScreen.Name = "KeyPromptScreen"
-    keyScreen.Parent = game:GetService("CoreGui")
-    keyScreen.ResetOnSpawn = false
+-- Function to create a key input window
+function LumosUI:CreateKeyInputWindow(callback)
+    local ScreenGui = Instance.new("ScreenGui")
+    local Frame = Instance.new("Frame")
+    local TitleBar = Instance.new("TextLabel")
+    local KeyInputBox = Instance.new("TextBox")
+    local SubmitButton = Instance.new("TextButton")
 
-    -- Create a Frame for the prompt
-    local frame = Instance.new("Frame")
-    frame.Parent = keyScreen
-    frame.Size = UDim2.new(0, 400, 0, 200)
-    frame.Position = UDim2.new(0.5, -200, 0.5, -100)
-    frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    frame.BorderSizePixel = 0
+    ScreenGui.Name = "LumosUI_KeyInputScreenGui"
+    ScreenGui.ResetOnSpawn = false
+    ScreenGui.Parent = game:GetService("CoreGui")
 
-    -- Create a TextLabel for the prompt message
-    local label = Instance.new("TextLabel")
-    label.Parent = frame
-    label.Size = UDim2.new(1, 0, 0.2, 0)
-    label.Text = "Enter your key:"
-    label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    label.BackgroundTransparency = 1
-    label.TextSize = 18
-    label.TextAlignment = Enum.TextAlignment.Center
-    label.Font = Enum.Font.Gotham
+    Frame.Name = "MainFrame"
+    Frame.Parent = ScreenGui
+    Frame.Size = UDim2.new(0, 400, 0, 200)
+    Frame.Position = UDim2.new(0.5, -200, 0.5, -100)
+    Frame.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
+    Frame.BorderSizePixel = 0
+    Frame.AnchorPoint = Vector2.new(0.5, 0.5)
 
-    -- Create a TextBox for key input
-    local keyInput = Instance.new("TextBox")
-    keyInput.Parent = frame
-    keyInput.Size = UDim2.new(0.8, 0, 0.2, 0)
-    keyInput.Position = UDim2.new(0.5, -120, 0.4, 0)
-    keyInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    keyInput.BorderSizePixel = 0
-    keyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-    keyInput.Font = Enum.Font.Gotham
-    keyInput.TextSize = 18
-    keyInput.PlaceholderText = "Enter Key Here"
-    keyInput.Text = ""
+    TitleBar.Name = "TitleBar"
+    TitleBar.Parent = Frame
+    TitleBar.Text = "Enter Key"
+    TitleBar.Size = UDim2.new(1, 0, 0, 40)
+    TitleBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    TitleBar.TextColor3 = Color3.fromRGB(200, 200, 200)
+    TitleBar.Font = Enum.Font.GothamBold
+    TitleBar.TextSize = 18
+    TitleBar.TextXAlignment = Enum.TextXAlignment.Center
 
-    -- Create a Button to submit the key
-    local submitButton = Instance.new("TextButton")
-    submitButton.Parent = frame
-    submitButton.Size = UDim2.new(0.8, 0, 0.2, 0)
-    submitButton.Position = UDim2.new(0.5, -120, 0.7, 0)
-    submitButton.Text = "Submit"
-    submitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    submitButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    submitButton.Font = Enum.Font.Gotham
-    submitButton.TextSize = 18
-    submitButton.BorderSizePixel = 0
+    KeyInputBox.Name = "KeyInputBox"
+    KeyInputBox.Parent = Frame
+    KeyInputBox.PlaceholderText = "Enter Key..."
+    KeyInputBox.Size = UDim2.new(0, 250, 0, 40)
+    KeyInputBox.Position = UDim2.new(0.5, -125, 0.4, 0)
+    KeyInputBox.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    KeyInputBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    KeyInputBox.Font = Enum.Font.Gotham
+    KeyInputBox.TextSize = 16
+    KeyInputBox.ClearTextOnFocus = true
+    KeyInputBox.Text = ""
 
-    -- Button Click Event
-    submitButton.MouseButton1Click:Connect(function()
-        if keyInput.Text == validKey then
-            print("Key validated! Showing UI...")
-            keyScreen:Destroy()  -- Destroy the key prompt screen
-            self:CreateWindow("LumosUI", UDim2.new(0, 500, 0, 400))  -- Show the main UI
+    SubmitButton.Name = "SubmitButton"
+    SubmitButton.Parent = Frame
+    SubmitButton.Text = "Submit"
+    SubmitButton.Size = UDim2.new(0, 100, 0, 40)
+    SubmitButton.Position = UDim2.new(0.5, -50, 0.7, 0)
+    SubmitButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    SubmitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SubmitButton.Font = Enum.Font.GothamSemibold
+    SubmitButton.TextSize = 16
+
+    -- Set rounded corners for the input box and button
+    local cornerInput = Instance.new("UICorner")
+    cornerInput.CornerRadius = UDim.new(0, 12)
+    cornerInput.Parent = KeyInputBox
+
+    local cornerButton = Instance.new("UICorner")
+    cornerButton.CornerRadius = UDim.new(0, 12)
+    cornerButton.Parent = SubmitButton
+
+    -- Button functionality
+    SubmitButton.MouseButton1Click:Connect(function()
+        local enteredKey = KeyInputBox.Text
+        if self:CheckKey(enteredKey) then
+            print("Key valid! Access granted.")
+            ScreenGui:Destroy()
+            if callback then
+                callback()
+            end
         else
-            print("Invalid key entered!")
-            keyInput.Text = ""  -- Clear the text box for the user to try again
+            print("Invalid key! Please try again.")
         end
     end)
+
+    return ScreenGui
 end
 
--- Function to create a draggable window
+-- Function to create a window after key input
 function LumosUI:CreateWindow(title, size)
     local ScreenGui = Instance.new("ScreenGui")
     local Frame = Instance.new("Frame")
@@ -96,10 +101,6 @@ function LumosUI:CreateWindow(title, size)
     Frame.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
     Frame.BorderSizePixel = 0
     Frame.AnchorPoint = Vector2.new(0.5, 0.5)
-    Frame.ClipsDescendants = true
-    Frame.ZIndex = 1
-    Frame.BackgroundTransparency = 0.1
-    Frame.BorderColor3 = Color3.fromRGB(40, 40, 40)
 
     TitleBar.Name = "TitleBar"
     TitleBar.Parent = Frame
@@ -110,79 +111,8 @@ function LumosUI:CreateWindow(title, size)
     TitleBar.Font = Enum.Font.GothamBold
     TitleBar.TextSize = 18
     TitleBar.TextXAlignment = Enum.TextXAlignment.Center
-    TitleBar.BorderSizePixel = 0
-
-    -- Add dragging functionality
-    local dragging = false
-    local dragStart, startPos
-
-    TitleBar.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            dragStart = input.Position
-            startPos = Frame.Position
-        end
-    end)
-
-    TitleBar.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
-    end)
-
-    game:GetService("UserInputService").InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local delta = input.Position - dragStart
-            Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        end
-    end)
 
     return Frame
 end
-
--- Function to create a modern button with rounded corners
-function LumosUI:CreateButton(parent, text, callback)
-    local Button = Instance.new("TextButton")
-
-    Button.Name = "LumosUIButton"
-    Button.Parent = parent
-    Button.Text = text or "Button"
-    Button.Size = UDim2.new(0, 200, 0, 50)
-    Button.Position = UDim2.new(0.5, -100, 0.5, 0)
-    Button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Button.Font = Enum.Font.GothamSemibold
-    Button.TextSize = 16
-    Button.BorderSizePixel = 0
-    Button.AutoButtonColor = false
-    Button.ClipsDescendants = true
-    Button.ZIndex = 2
-    Button.BackgroundTransparency = 0.1
-
-    -- Set rounded corners
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 12)  -- Set the radius to create rounded edges
-    corner.Parent = Button
-
-    -- Hover effect
-    Button.MouseEnter:Connect(function()
-        Button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    end)
-
-    Button.MouseLeave:Connect(function()
-        Button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-    end)
-
-    Button.MouseButton1Click:Connect(function()
-        if callback then
-            callback()
-        end
-    end)
-
-    return Button
-end
-
--- Call the key prompt function to ask for the key before showing the UI
-LumosUI:CreateKeyPrompt()
 
 return LumosUI
