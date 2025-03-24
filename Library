@@ -1,40 +1,69 @@
--- LumosUI Library (Jednoduchší a kompatibilnejší dizajn)
--- Autor: TvůjNázev
--- Dátum: 25. 3. 2025
+-- LumosUI Library (Modernized and Enhanced)
+-- Author: YourName
+-- Date: March 25, 2025
 
 local LumosUI = {}
 
--- Funkcia na vytvorenie okna
+-- Function to create a draggable window
 function LumosUI:CreateWindow(title, size)
     local ScreenGui = Instance.new("ScreenGui")
     local Frame = Instance.new("Frame")
-    local Title = Instance.new("TextLabel")
+    local TitleBar = Instance.new("TextLabel")
 
     ScreenGui.Name = "LumosUI_ScreenGui"
-    ScreenGui.ResetOnSpawn = false -- Aby sa UI nezmizlo
+    ScreenGui.ResetOnSpawn = false
     ScreenGui.Parent = game:GetService("CoreGui")
 
     Frame.Name = "MainFrame"
     Frame.Parent = ScreenGui
     Frame.Size = size or UDim2.new(0, 400, 0, 300)
     Frame.Position = UDim2.new(0.5, -200, 0.5, -150)
-    Frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    Frame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     Frame.BorderSizePixel = 0
     Frame.AnchorPoint = Vector2.new(0.5, 0.5)
+    Frame.ClipsDescendants = true
 
-    Title.Name = "TitleLabel"
-    Title.Parent = Frame
-    Title.Text = title or "LumosUI Window"
-    Title.Size = UDim2.new(1, 0, 0, 40)
-    Title.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Title.Font = Enum.Font.SourceSans
-    Title.TextSize = 20
+    TitleBar.Name = "TitleBar"
+    TitleBar.Parent = Frame
+    TitleBar.Text = title or "LumosUI Window"
+    TitleBar.Size = UDim2.new(1, 0, 0, 40)
+    TitleBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    TitleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleBar.Font = Enum.Font.SourceSansBold
+    TitleBar.TextSize = 18
+    TitleBar.TextXAlignment = Enum.TextXAlignment.Left
+    TitleBar.BorderSizePixel = 0
+    TitleBar.Padding = UDim.new(0, 10)
+
+    -- Draggable functionality
+    local dragging = false
+    local dragStart, startPos
+
+    TitleBar.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = input.Position
+            startPos = Frame.Position
+        end
+    end)
+
+    TitleBar.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local delta = input.Position - dragStart
+            Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
 
     return Frame
 end
 
--- Funkcia na vytvorenie tlačidla
+-- Function to create a button
 function LumosUI:CreateButton(parent, text, callback)
     local Button = Instance.new("TextButton")
 
@@ -45,9 +74,18 @@ function LumosUI:CreateButton(parent, text, callback)
     Button.Position = UDim2.new(0.5, -75, 0.5, 0)
     Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Button.Font = Enum.Font.SourceSans
+    Button.Font = Enum.Font.SourceSansBold
     Button.TextSize = 18
     Button.BorderSizePixel = 0
+    Button.AutoButtonColor = false
+
+    Button.MouseEnter:Connect(function()
+        Button.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+    end)
+
+    Button.MouseLeave:Connect(function()
+        Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    end)
 
     Button.MouseButton1Click:Connect(function()
         if callback then
@@ -58,7 +96,7 @@ function LumosUI:CreateButton(parent, text, callback)
     return Button
 end
 
--- Funkcia na vytvorenie posuvníka
+-- Function to create a slider
 function LumosUI:CreateSlider(parent, min, max, callback)
     local SliderFrame = Instance.new("Frame")
     local SliderBar = Instance.new("Frame")
