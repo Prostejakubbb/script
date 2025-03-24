@@ -1,8 +1,18 @@
--- LumosUI Library (Modernized and Enhanced)
+-- LumosUI Library (Inspired by Obsidian and Pepsi UI)
 -- Author: YourName
 -- Date: March 25, 2025
 
 local LumosUI = {}
+local validKey = "1234" -- Change this to your desired key
+
+-- Key System
+function LumosUI:CheckKey(userKey)
+    if userKey == validKey then
+        return true
+    else
+        return false
+    end
+end
 
 -- Function to create a draggable window
 function LumosUI:CreateWindow(title, size)
@@ -16,26 +26,28 @@ function LumosUI:CreateWindow(title, size)
 
     Frame.Name = "MainFrame"
     Frame.Parent = ScreenGui
-    Frame.Size = size or UDim2.new(0, 400, 0, 300)
-    Frame.Position = UDim2.new(0.5, -200, 0.5, -150)
-    Frame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    Frame.Size = size or UDim2.new(0, 500, 0, 400)
+    Frame.Position = UDim2.new(0.5, -250, 0.5, -200)
+    Frame.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
     Frame.BorderSizePixel = 0
     Frame.AnchorPoint = Vector2.new(0.5, 0.5)
     Frame.ClipsDescendants = true
+    Frame.ZIndex = 1
+    Frame.BackgroundTransparency = 0.1
+    Frame.BorderColor3 = Color3.fromRGB(40, 40, 40)
 
     TitleBar.Name = "TitleBar"
     TitleBar.Parent = Frame
     TitleBar.Text = title or "LumosUI Window"
     TitleBar.Size = UDim2.new(1, 0, 0, 40)
     TitleBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-    TitleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TitleBar.Font = Enum.Font.SourceSansBold
+    TitleBar.TextColor3 = Color3.fromRGB(200, 200, 200)
+    TitleBar.Font = Enum.Font.GothamBold
     TitleBar.TextSize = 18
-    TitleBar.TextXAlignment = Enum.TextXAlignment.Left
+    TitleBar.TextXAlignment = Enum.TextXAlignment.Center
     TitleBar.BorderSizePixel = 0
-    TitleBar.Padding = UDim.new(0, 10)
 
-    -- Draggable functionality
+    -- Add dragging functionality
     local dragging = false
     local dragStart, startPos
 
@@ -63,28 +75,32 @@ function LumosUI:CreateWindow(title, size)
     return Frame
 end
 
--- Function to create a button
+-- Function to create a modern button
 function LumosUI:CreateButton(parent, text, callback)
     local Button = Instance.new("TextButton")
 
     Button.Name = "LumosUIButton"
     Button.Parent = parent
-    Button.Text = text or "Click Me"
-    Button.Size = UDim2.new(0, 150, 0, 40)
-    Button.Position = UDim2.new(0.5, -75, 0.5, 0)
-    Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    Button.Text = text or "Button"
+    Button.Size = UDim2.new(0, 200, 0, 50)
+    Button.Position = UDim2.new(0.5, -100, 0.5, 0)
+    Button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Button.Font = Enum.Font.SourceSansBold
-    Button.TextSize = 18
+    Button.Font = Enum.Font.GothamSemibold
+    Button.TextSize = 16
     Button.BorderSizePixel = 0
     Button.AutoButtonColor = false
+    Button.ClipsDescendants = true
+    Button.ZIndex = 2
+    Button.BackgroundTransparency = 0.1
 
+    -- Hover effect
     Button.MouseEnter:Connect(function()
-        Button.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+        Button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     end)
 
     Button.MouseLeave:Connect(function()
-        Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        Button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     end)
 
     Button.MouseButton1Click:Connect(function()
@@ -96,24 +112,25 @@ function LumosUI:CreateButton(parent, text, callback)
     return Button
 end
 
--- Function to create a slider
+-- Function to create a modern slider
 function LumosUI:CreateSlider(parent, min, max, callback)
     local SliderFrame = Instance.new("Frame")
     local SliderBar = Instance.new("Frame")
     local SliderButton = Instance.new("TextButton")
+    local ValueLabel = Instance.new("TextLabel")
 
     SliderFrame.Name = "SliderFrame"
     SliderFrame.Parent = parent
-    SliderFrame.Size = UDim2.new(0, 300, 0, 30)
-    SliderFrame.Position = UDim2.new(0.5, -150, 0.6, 0)
-    SliderFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    SliderFrame.Size = UDim2.new(0, 400, 0, 50)
+    SliderFrame.Position = UDim2.new(0.5, -200, 0.6, 0)
+    SliderFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     SliderFrame.BorderSizePixel = 0
 
     SliderBar.Name = "SliderBar"
     SliderBar.Parent = SliderFrame
-    SliderBar.Size = UDim2.new(1, 0, 0.5, 0)
-    SliderBar.Position = UDim2.new(0, 0, 0.25, 0)
-    SliderBar.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    SliderBar.Size = UDim2.new(1, -20, 0.4, 0)
+    SliderBar.Position = UDim2.new(0, 10, 0.3, 0)
+    SliderBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     SliderBar.BorderSizePixel = 0
 
     SliderButton.Name = "SliderButton"
@@ -123,6 +140,16 @@ function LumosUI:CreateSlider(parent, min, max, callback)
     SliderButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
     SliderButton.Text = ""
     SliderButton.BorderSizePixel = 0
+
+    ValueLabel.Name = "ValueLabel"
+    ValueLabel.Parent = SliderFrame
+    ValueLabel.Size = UDim2.new(0, 60, 0, 30)
+    ValueLabel.Position = UDim2.new(1, -70, 0.5, -15)
+    ValueLabel.BackgroundTransparency = 1
+    ValueLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    ValueLabel.Font = Enum.Font.Gotham
+    ValueLabel.TextSize = 14
+    ValueLabel.Text = tostring(min)
 
     local dragging = false
 
@@ -146,6 +173,7 @@ function LumosUI:CreateSlider(parent, min, max, callback)
             SliderButton.Position = UDim2.new(newPosition, 0, 0, 0)
             local value = math.floor((min + (max - min) * newPosition) + 0.5)
 
+            ValueLabel.Text = tostring(value)
             if callback then
                 callback(value)
             end
