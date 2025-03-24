@@ -14,14 +14,73 @@ function LumosUI:CheckKey(userKey)
     end
 end
 
+-- Function to create a key prompt screen
+function LumosUI:CreateKeyPrompt()
+    -- Create a ScreenGui for the key prompt
+    local keyScreen = Instance.new("ScreenGui")
+    keyScreen.Name = "KeyPromptScreen"
+    keyScreen.Parent = game:GetService("CoreGui")
+    keyScreen.ResetOnSpawn = false
+
+    -- Create a Frame for the prompt
+    local frame = Instance.new("Frame")
+    frame.Parent = keyScreen
+    frame.Size = UDim2.new(0, 400, 0, 200)
+    frame.Position = UDim2.new(0.5, -200, 0.5, -100)
+    frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    frame.BorderSizePixel = 0
+
+    -- Create a TextLabel for the prompt message
+    local label = Instance.new("TextLabel")
+    label.Parent = frame
+    label.Size = UDim2.new(1, 0, 0.2, 0)
+    label.Text = "Enter your key:"
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.BackgroundTransparency = 1
+    label.TextSize = 18
+    label.TextAlignment = Enum.TextAlignment.Center
+    label.Font = Enum.Font.Gotham
+
+    -- Create a TextBox for key input
+    local keyInput = Instance.new("TextBox")
+    keyInput.Parent = frame
+    keyInput.Size = UDim2.new(0.8, 0, 0.2, 0)
+    keyInput.Position = UDim2.new(0.5, -120, 0.4, 0)
+    keyInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    keyInput.BorderSizePixel = 0
+    keyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+    keyInput.Font = Enum.Font.Gotham
+    keyInput.TextSize = 18
+    keyInput.PlaceholderText = "Enter Key Here"
+    keyInput.Text = ""
+
+    -- Create a Button to submit the key
+    local submitButton = Instance.new("TextButton")
+    submitButton.Parent = frame
+    submitButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+    submitButton.Position = UDim2.new(0.5, -120, 0.7, 0)
+    submitButton.Text = "Submit"
+    submitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    submitButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    submitButton.Font = Enum.Font.Gotham
+    submitButton.TextSize = 18
+    submitButton.BorderSizePixel = 0
+
+    -- Button Click Event
+    submitButton.MouseButton1Click:Connect(function()
+        if keyInput.Text == validKey then
+            print("Key validated! Showing UI...")
+            keyScreen:Destroy()  -- Destroy the key prompt screen
+            self:CreateWindow("LumosUI", UDim2.new(0, 500, 0, 400))  -- Show the main UI
+        else
+            print("Invalid key entered!")
+            keyInput.Text = ""  -- Clear the text box for the user to try again
+        end
+    end)
+end
+
 -- Function to create a draggable window
-function LumosUI:CreateWindow(title, size, userKey)
-    -- Check if key is valid before showing the window
-    if not self:CheckKey(userKey) then
-        print("Invalid key! Access denied.")
-        return nil
-    end
-    
+function LumosUI:CreateWindow(title, size)
     local ScreenGui = Instance.new("ScreenGui")
     local Frame = Instance.new("Frame")
     local TitleBar = Instance.new("TextLabel")
@@ -123,75 +182,7 @@ function LumosUI:CreateButton(parent, text, callback)
     return Button
 end
 
--- Function to create a modern slider
-function LumosUI:CreateSlider(parent, min, max, callback)
-    local SliderFrame = Instance.new("Frame")
-    local SliderBar = Instance.new("Frame")
-    local SliderButton = Instance.new("TextButton")
-    local ValueLabel = Instance.new("TextLabel")
-
-    SliderFrame.Name = "SliderFrame"
-    SliderFrame.Parent = parent
-    SliderFrame.Size = UDim2.new(0, 400, 0, 50)
-    SliderFrame.Position = UDim2.new(0.5, -200, 0.6, 0)
-    SliderFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    SliderFrame.BorderSizePixel = 0
-
-    SliderBar.Name = "SliderBar"
-    SliderBar.Parent = SliderFrame
-    SliderBar.Size = UDim2.new(1, -20, 0.4, 0)
-    SliderBar.Position = UDim2.new(0, 10, 0.3, 0)
-    SliderBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    SliderBar.BorderSizePixel = 0
-
-    SliderButton.Name = "SliderButton"
-    SliderButton.Parent = SliderBar
-    SliderButton.Size = UDim2.new(0, 20, 1, 0)
-    SliderButton.Position = UDim2.new(0, 0, 0, 0)
-    SliderButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-    SliderButton.Text = ""
-    SliderButton.BorderSizePixel = 0
-
-    ValueLabel.Name = "ValueLabel"
-    ValueLabel.Parent = SliderFrame
-    ValueLabel.Size = UDim2.new(0, 60, 0, 30)
-    ValueLabel.Position = UDim2.new(1, -70, 0.5, -15)
-    ValueLabel.BackgroundTransparency = 1
-    ValueLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-    ValueLabel.Font = Enum.Font.Gotham
-    ValueLabel.TextSize = 14
-    ValueLabel.Text = tostring(min)
-
-    local dragging = false
-
-    SliderButton.MouseButton1Down:Connect(function()
-        dragging = true
-    end)
-
-    game:GetService("UserInputService").InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
-    end)
-
-    game:GetService("RunService").RenderStepped:Connect(function()
-        if dragging then
-            local mousePos = game:GetService("UserInputService"):GetMouseLocation().X
-            local framePos = SliderBar.AbsolutePosition.X
-            local frameSize = SliderBar.AbsoluteSize.X
-            local newPosition = math.clamp((mousePos - framePos) / frameSize, 0, 1)
-
-            SliderButton.Position = UDim2.new(newPosition, 0, 0, 0)
-            local value = math.floor((min + (max - min) * newPosition) + 0.5)
-
-            ValueLabel.Text = tostring(value)
-            if callback then
-                callback(value)
-            end
-        end
-    end)
-
-    return SliderFrame
-end
+-- Call the key prompt function to ask for the key before showing the UI
+LumosUI:CreateKeyPrompt()
 
 return LumosUI
