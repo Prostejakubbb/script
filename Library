@@ -13,6 +13,7 @@ function LumosUI:CreateKeyInputWindow(callback)
     local TitleBar = Instance.new("TextLabel")
     local KeyInputBox = Instance.new("TextBox")
     local SubmitButton = Instance.new("TextButton")
+    local MinimizeButton = Instance.new("TextButton") -- Add minimize button
 
     ScreenGui.Name = "LumosUI_KeyInputScreenGui"
     ScreenGui.ResetOnSpawn = false
@@ -58,6 +59,17 @@ function LumosUI:CreateKeyInputWindow(callback)
     SubmitButton.Font = Enum.Font.GothamSemibold
     SubmitButton.TextSize = 16
 
+    -- Minimize button
+    MinimizeButton.Name = "MinimizeButton"
+    MinimizeButton.Parent = Frame
+    MinimizeButton.Text = "_"
+    MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
+    MinimizeButton.Position = UDim2.new(1, -35, 0, 5)
+    MinimizeButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    MinimizeButton.Font = Enum.Font.GothamBold
+    MinimizeButton.TextSize = 16
+
     -- Set rounded corners for the input box and button
     local cornerInput = Instance.new("UICorner")
     cornerInput.CornerRadius = UDim.new(0, 12)
@@ -67,7 +79,32 @@ function LumosUI:CreateKeyInputWindow(callback)
     cornerButton.CornerRadius = UDim.new(0, 12)
     cornerButton.Parent = SubmitButton
 
-    -- Button functionality
+    -- Add dragging functionality to the key input window
+    local dragging = false
+    local dragStart, startPos
+
+    TitleBar.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = input.Position
+            startPos = Frame.Position
+        end
+    end)
+
+    TitleBar.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local delta = input.Position - dragStart
+            Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+
+    -- Button functionality for submit
     SubmitButton.MouseButton1Click:Connect(function()
         local enteredKey = KeyInputBox.Text
         if self:CheckKey(enteredKey) then
@@ -81,6 +118,19 @@ function LumosUI:CreateKeyInputWindow(callback)
         end
     end)
 
+    -- Minimize functionality
+    MinimizeButton.MouseButton1Click:Connect(function()
+        if Frame.Size == UDim2.new(0, 400, 0, 200) then
+            -- Minimize the window
+            Frame:TweenSize(UDim2.new(0, 200, 0, 40), "Out", "Quad", 0.2, true)
+            MinimizeButton.Text = "+"
+        else
+            -- Restore the window
+            Frame:TweenSize(UDim2.new(0, 400, 0, 200), "Out", "Quad", 0.2, true)
+            MinimizeButton.Text = "_"
+        end
+    end)
+
     return ScreenGui
 end
 
@@ -89,7 +139,7 @@ function LumosUI:CreateWindow(title, size)
     local ScreenGui = Instance.new("ScreenGui")
     local Frame = Instance.new("Frame")
     local TitleBar = Instance.new("TextLabel")
-    local MinimizeButton = Instance.new("TextButton")
+    local MinimizeButton = Instance.new("TextButton") -- Add minimize button
 
     ScreenGui.Name = "LumosUI_ScreenGui"
     ScreenGui.ResetOnSpawn = false
