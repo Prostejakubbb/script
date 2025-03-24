@@ -6,19 +6,21 @@ function LumosUI:CheckKey(userKey)
     return userKey == validKey
 end
 
--- Function to create a key input window
+-- Function to create a key input window with animations
 function LumosUI:CreateKeyInputWindow(callback)
     local ScreenGui = Instance.new("ScreenGui")
     local Frame = Instance.new("Frame")
     local TitleBar = Instance.new("TextLabel")
     local KeyInputBox = Instance.new("TextBox")
     local SubmitButton = Instance.new("TextButton")
-    local MinimizeButton = Instance.new("TextButton") -- Minimize button
+    local MinimizeButton = Instance.new("TextButton")
 
+    -- Setup ScreenGui
     ScreenGui.Name = "LumosUI_KeyInputScreenGui"
     ScreenGui.ResetOnSpawn = false
     ScreenGui.Parent = game:GetService("CoreGui")
 
+    -- Setup Frame
     Frame.Name = "MainFrame"
     Frame.Parent = ScreenGui
     Frame.Size = UDim2.new(0, 400, 0, 200)
@@ -27,11 +29,12 @@ function LumosUI:CreateKeyInputWindow(callback)
     Frame.BorderSizePixel = 0
     Frame.AnchorPoint = Vector2.new(0.5, 0.5)
 
-    -- Rounded corners
+    -- Add rounded corners
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, 12)
     corner.Parent = Frame
 
+    -- Setup Title Bar
     TitleBar.Name = "TitleBar"
     TitleBar.Parent = Frame
     TitleBar.Text = "Enter Key"
@@ -42,6 +45,7 @@ function LumosUI:CreateKeyInputWindow(callback)
     TitleBar.TextSize = 18
     TitleBar.TextXAlignment = Enum.TextXAlignment.Center
 
+    -- Setup Key Input Box
     KeyInputBox.Name = "KeyInputBox"
     KeyInputBox.Parent = Frame
     KeyInputBox.PlaceholderText = "Enter Key..."
@@ -52,8 +56,8 @@ function LumosUI:CreateKeyInputWindow(callback)
     KeyInputBox.Font = Enum.Font.Gotham
     KeyInputBox.TextSize = 16
     KeyInputBox.ClearTextOnFocus = true
-    KeyInputBox.Text = ""
 
+    -- Setup Submit Button
     SubmitButton.Name = "SubmitButton"
     SubmitButton.Parent = Frame
     SubmitButton.Text = "Submit"
@@ -64,7 +68,7 @@ function LumosUI:CreateKeyInputWindow(callback)
     SubmitButton.Font = Enum.Font.GothamSemibold
     SubmitButton.TextSize = 16
 
-    -- Minimize button
+    -- Setup Minimize Button
     MinimizeButton.Name = "MinimizeButton"
     MinimizeButton.Parent = Frame
     MinimizeButton.Text = "_"
@@ -75,7 +79,7 @@ function LumosUI:CreateKeyInputWindow(callback)
     MinimizeButton.Font = Enum.Font.GothamBold
     MinimizeButton.TextSize = 16
 
-    -- Add dragging functionality to the key input window
+    -- Add Draggable functionality
     local dragging = false
     local dragStart, startPos
 
@@ -100,42 +104,36 @@ function LumosUI:CreateKeyInputWindow(callback)
         end
     end)
 
-    -- Button functionality for submit
+    -- Submit button functionality
     SubmitButton.MouseButton1Click:Connect(function()
         local enteredKey = KeyInputBox.Text
         if self:CheckKey(enteredKey) then
-            -- Successful key entry
+            -- After successful key entry, call the callback
             print("Key valid! Access granted.")
-            -- Add animation for key input success
-            Frame:TweenPosition(UDim2.new(0.5, -200, 0.5, -100), "Out", "Quad", 0.5, true)
-            wait(0.5)
             ScreenGui:Destroy()
             if callback then
                 callback()
             end
         else
-            -- Invalid key entry
             print("Invalid key! Please try again.")
         end
     end)
 
-    -- Minimize window functionality with correct behavior
+    -- Minimize functionality with animation
     local isMinimized = false
     MinimizeButton.MouseButton1Click:Connect(function()
         if not isMinimized then
-            -- Minimize the window with animation
             Frame:TweenSize(UDim2.new(0, 400, 0, 40), "Out", "Quad", 0.2, true)
             MinimizeButton.Text = "+"
             isMinimized = true
         else
-            -- Restore the window with animation
             Frame:TweenSize(UDim2.new(0, 400, 0, 200), "Out", "Quad", 0.2, true)
             MinimizeButton.Text = "_"
             isMinimized = false
         end
     end)
 
-    -- Add opening animation for the window
+    -- Opening animation for the window
     Frame.Position = UDim2.new(0.5, -200, 0.5, -100)
     Frame:TweenPosition(UDim2.new(0.5, -200, 0.5, -100), "Out", "Quad", 0.5, true)
 
@@ -143,16 +141,19 @@ function LumosUI:CreateKeyInputWindow(callback)
 end
 
 -- Function to create a main window after key input
-function LumosUI:CreateWindow(title, size)
+function LumosUI:CreateMainWindow(title, size)
     local ScreenGui = Instance.new("ScreenGui")
     local Frame = Instance.new("Frame")
     local TitleBar = Instance.new("TextLabel")
-    local MinimizeButton = Instance.new("TextButton") -- Add minimize button
+    local MinimizeButton = Instance.new("TextButton")
+    local Button1 = Instance.new("TextButton")
 
+    -- Setup ScreenGui
     ScreenGui.Name = "LumosUI_ScreenGui"
     ScreenGui.ResetOnSpawn = false
     ScreenGui.Parent = game:GetService("CoreGui")
 
+    -- Setup Main Window Frame
     Frame.Name = "MainFrame"
     Frame.Parent = ScreenGui
     Frame.Size = size or UDim2.new(0, 500, 0, 400)
@@ -161,14 +162,15 @@ function LumosUI:CreateWindow(title, size)
     Frame.BorderSizePixel = 0
     Frame.AnchorPoint = Vector2.new(0.5, 0.5)
 
-    -- Rounded corners
+    -- Add rounded corners
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, 12)
     corner.Parent = Frame
 
+    -- Setup Title Bar
     TitleBar.Name = "TitleBar"
     TitleBar.Parent = Frame
-    TitleBar.Text = title or "LumosUI Window"
+    TitleBar.Text = title or "Main Window"
     TitleBar.Size = UDim2.new(1, 0, 0, 40)
     TitleBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
     TitleBar.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -176,7 +178,7 @@ function LumosUI:CreateWindow(title, size)
     TitleBar.TextSize = 18
     TitleBar.TextXAlignment = Enum.TextXAlignment.Center
 
-    -- Minimize Button
+    -- Setup Minimize Button
     MinimizeButton.Name = "MinimizeButton"
     MinimizeButton.Parent = Frame
     MinimizeButton.Text = "_"
@@ -187,11 +189,23 @@ function LumosUI:CreateWindow(title, size)
     MinimizeButton.Font = Enum.Font.GothamBold
     MinimizeButton.TextSize = 16
 
-    -- Add opening animation for main window
-    Frame.Position = UDim2.new(0.5, -250, 0.5, -200)
-    Frame:TweenPosition(UDim2.new(0.5, -250, 0.5, -200), "Out", "Quad", 0.5, true)
+    -- Setup Button1
+    Button1.Name = "Button1"
+    Button1.Parent = Frame
+    Button1.Text = "Click Me"
+    Button1.Size = UDim2.new(0, 200, 0, 50)
+    Button1.Position = UDim2.new(0.5, -100, 0.4, 0)
+    Button1.BackgroundColor3 = Color3.fromRGB(50, 150, 50)
+    Button1.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Button1.Font = Enum.Font.GothamSemibold
+    Button1.TextSize = 20
 
-    -- Minimize button functionality
+    -- Add Button1 Click Event
+    Button1.MouseButton1Click:Connect(function()
+        print("Button Clicked!")
+    end)
+
+    -- Minimize functionality
     MinimizeButton.MouseButton1Click:Connect(function()
         if Frame.Size == UDim2.new(0, 500, 0, 400) then
             Frame:TweenSize(UDim2.new(0, 200, 0, 40), "Out", "Quad", 0.2, true)
