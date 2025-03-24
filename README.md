@@ -1,4 +1,4 @@
-# Obsidian UI Library
+# LOL UI Library
 
 ![Example Image](Example.png?raw=true)
 
