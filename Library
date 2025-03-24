@@ -112,7 +112,7 @@ function LumosUI:CreateWindow(title, size)
     TitleBar.TextSize = 18
     TitleBar.TextXAlignment = Enum.TextXAlignment.Center
 
-    -- Add drag functionality to the window
+    -- Add drag functionality to the window (now draggable on the title bar)
     local dragging = false
     local dragStart, startPos
 
