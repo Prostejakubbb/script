@@ -27,6 +27,11 @@ function LumosUI:CreateKeyInputWindow(callback)
     Frame.BorderSizePixel = 0
     Frame.AnchorPoint = Vector2.new(0.5, 0.5)
 
+    -- Rounded corners
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 12)
+    corner.Parent = Frame
+
     TitleBar.Name = "TitleBar"
     TitleBar.Parent = Frame
     TitleBar.Text = "Enter Key"
@@ -70,15 +75,6 @@ function LumosUI:CreateKeyInputWindow(callback)
     MinimizeButton.Font = Enum.Font.GothamBold
     MinimizeButton.TextSize = 16
 
-    -- Set rounded corners for the input box and button
-    local cornerInput = Instance.new("UICorner")
-    cornerInput.CornerRadius = UDim.new(0, 12)
-    cornerInput.Parent = KeyInputBox
-
-    local cornerButton = Instance.new("UICorner")
-    cornerButton.CornerRadius = UDim.new(0, 12)
-    cornerButton.Parent = SubmitButton
-
     -- Add dragging functionality to the key input window
     local dragging = false
     local dragStart, startPos
@@ -108,14 +104,17 @@ function LumosUI:CreateKeyInputWindow(callback)
     SubmitButton.MouseButton1Click:Connect(function()
         local enteredKey = KeyInputBox.Text
         if self:CheckKey(enteredKey) then
+            -- Successful key entry
             print("Key valid! Access granted.")
+            -- Add animation for key input success
+            Frame:TweenPosition(UDim2.new(0.5, -200, 0.5, -100), "Out", "Quad", 0.5, true)
+            wait(0.5)
             ScreenGui:Destroy()
-
-            -- Trigger callback to show main UI window
             if callback then
                 callback()
             end
         else
+            -- Invalid key entry
             print("Invalid key! Please try again.")
         end
     end)
@@ -162,6 +161,11 @@ function LumosUI:CreateWindow(title, size)
     Frame.BorderSizePixel = 0
     Frame.AnchorPoint = Vector2.new(0.5, 0.5)
 
+    -- Rounded corners
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 12)
+    corner.Parent = Frame
+
     TitleBar.Name = "TitleBar"
     TitleBar.Parent = Frame
     TitleBar.Text = title or "LumosUI Window"
@@ -172,6 +176,7 @@ function LumosUI:CreateWindow(title, size)
     TitleBar.TextSize = 18
     TitleBar.TextXAlignment = Enum.TextXAlignment.Center
 
+    -- Minimize Button
     MinimizeButton.Name = "MinimizeButton"
     MinimizeButton.Parent = Frame
     MinimizeButton.Text = "_"
@@ -181,6 +186,10 @@ function LumosUI:CreateWindow(title, size)
     MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     MinimizeButton.Font = Enum.Font.GothamBold
     MinimizeButton.TextSize = 16
+
+    -- Add opening animation for main window
+    Frame.Position = UDim2.new(0.5, -250, 0.5, -200)
+    Frame:TweenPosition(UDim2.new(0.5, -250, 0.5, -200), "Out", "Quad", 0.5, true)
 
     -- Minimize button functionality
     MinimizeButton.MouseButton1Click:Connect(function()
