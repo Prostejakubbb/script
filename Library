@@ -110,6 +110,8 @@ function LumosUI:CreateKeyInputWindow(callback)
         if self:CheckKey(enteredKey) then
             print("Key valid! Access granted.")
             ScreenGui:Destroy()
+
+            -- Trigger callback to show main UI window
             if callback then
                 callback()
             end
